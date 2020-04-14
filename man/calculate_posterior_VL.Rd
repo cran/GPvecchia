@@ -6,9 +6,10 @@
 \usage{
 calculate_posterior_VL(z, vecchia.approx,
   likelihood_model = c("gaussian", "logistic", "poisson", "gamma",
-  "beta", "gamma_alt"), covparms, likparms = list(alpha = 2, sigma =
-  sqrt(0.1)), max.iter = 50, convg = 1e-06, return_all = FALSE,
-  y_init = NA, prior_mean = rep(0, length(z)), verbose = FALSE)
+  "beta", "gamma_alt"), covparms, covmodel = "matern",
+  likparms = list(alpha = 2, sigma = sqrt(0.1)), max.iter = 50,
+  convg = 1e-06, return_all = FALSE, y_init = NA,
+  prior_mean = rep(0, length(z)), verbose = FALSE)
 }
 \arguments{
 \item{z}{an array of real numbers representing observations}
@@ -18,6 +19,8 @@ calculate_posterior_VL(z, vecchia.approx,
 \item{likelihood_model}{text describing likelihood model to be used for observations.  Can be "gaussian","logistic", "poisson", "gamma", or "beta"}
 
 \item{covparms}{covariance parameters as a vector}
+
+\item{covmodel}{type of the model covariance or selected elements of the covariance matrix}
 
 \item{likparms}{likelihood parameters for the likelihood_model, as a list.  Default values are sqrt(.1) for Gaussian noise and 2 for the alpha parameter for Gamma data.}
 

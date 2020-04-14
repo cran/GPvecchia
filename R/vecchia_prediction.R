@@ -60,7 +60,7 @@ vecchia_prediction=function(z,vecchia.approx,covparms,nuggets,var.exact,
 ######  compute V for posterior inference   #######
 
 U2V=function(U.obj){
-
+  
   U.y=U.obj$U[U.obj$latent,]
 
   if(U.obj$cond.yz=='zy') {
@@ -90,6 +90,7 @@ U2V=function(U.obj){
     # combine the blocks into one matrix
     zeromat.sparse=Matrix::sparseMatrix(c(),c(),dims=c(latents.after,latents.before))
     V.or=rbind(zeromat.sparse,V.oor)
+
     V.ord=methods::as(cbind(V.pr,V.or),'dtCMatrix')
 
   }
@@ -106,8 +107,8 @@ vecchia_mean=function(z,U.obj,V.ord){
   z.ord=z[U.obj$ord.z]
   z1=Matrix::crossprod(U[!U.obj$latent,],z.ord)
   z2=as.numeric(U[U.obj$latent,]%*%z1)
-  temp=solve(V.ord,rev(z2))
-  mu.rev=-solve(Matrix::t(V.ord),temp)
+  temp=Matrix::solve(V.ord,rev(z2))
+  mu.rev=-Matrix::solve(Matrix::t(V.ord),temp)
   mu.ord=rev(mu.rev)
 
   # for zero nugget, observations are posterior means
@@ -250,7 +251,7 @@ vecchia_var=function(U.obj,V.ord,exact=FALSE){
 V2covmat=function(preds){
 
   # compute joint covariance matrix
-  Sigma.ord=solve(as.matrix(revMat(preds$V.ord%*%Matrix::t(preds$V.ord))))
+  Sigma.ord=Matrix::solve(as.matrix(revMat(preds$V.ord%*%Matrix::t(preds$V.ord))))
 
   # for zero nugget, add zero rows/columns
   if(length(preds$U.obj$zero.nugg)>0){

@@ -5,6 +5,9 @@ Fast Gaussian-process inference using general Vecchia approximations
 
 For examples of how to use the package, please see the vignettes folder. Please note that GPvecchia is under active development and not stable at this time.
 
+## Reporting problems
+If you have an issue with GPvecchia, including unsatisfactory runtime, please open a Github ticket.
+
 ## References
 [Katzfuss, M., & Guinness, J. (2017). A general framework for Vecchia approximations of Gaussian processes. *arXiv:1708.06302*.](https://arxiv.org/abs/1708.06302)
 
@@ -25,21 +28,20 @@ Rcpp::sourceCpp('GPvecchia/src/MaxMin.cpp')
 ```
 --->
  
-This package can be installed directly from R by running the following code:
+This package can be installed directly from Github by running
 ```{r}
-library(devtools)
-install_github("katzfuss-group/GPvecchia")
+devtools::install_github("katzfuss-group/GPvecchia")
 ```
 Alternatively, one can download the repository and then build the package manually:
 ```{bash}
 R CMD build GPvecchia
-R CMD INSTALL GPvecchia_0.1.tar.gz
+R CMD INSTALL GPvecchia_0.1_0.tar.gz
 ```
 
 <!---
 .tar.gz file from the main directory here and then run:
 ```{r}
-install.packages("GPvecchia_0.1.tar.gz", repos = NULL, type = "source")
+install.packages("GPvecchia_0.1.0.tar.gz", repos = NULL, type = "source")
 ```
 -->
 

@@ -42,7 +42,7 @@ vecchia_estimate=function(data,locs,X,m=20,covmodel='matern',theta.ini,output.le
   } else {
   ## otherwise, estimate and de-trend
 
-    beta.hat=solve(crossprod(X),crossprod(X,data))
+    beta.hat=Matrix::solve(crossprod(X),crossprod(X,data))
     z=data-X%*%beta.hat
     trend='userspecified'
 
@@ -65,12 +65,12 @@ vecchia_estimate=function(data,locs,X,m=20,covmodel='matern',theta.ini,output.le
 
   ## specify vecchia loglikelihood
   n.par=length(theta.ini)
+
   negloglik.vecchia=function(logparms){
-      if(exp(logparms[3])>10 & covmodel=='matern'){
-          stop("The default optimization routine to find parameters did not converge. Try writing your own optimization.")
-      }
-      -vecchia_likelihood(z,vecchia.approx,exp(logparms)[-n.par],exp(logparms)[n.par],
-                          covmodel=covmodel)
+    if(exp(logparms[3])>10 & covmodel=='matern'){
+      stop("The default optimization routine to find parameters did not converge. Try writing your own optimization.")
+    }
+    -vecchia_likelihood(z,vecchia.approx,exp(logparms)[-n.par],exp(logparms)[n.par],covmodel=covmodel)
   }
 
   ## find MLE of theta (given beta.hat)
@@ -80,8 +80,8 @@ vecchia_estimate=function(data,locs,X,m=20,covmodel='matern',theta.ini,output.le
 
   ## return estimated parameters
   if(output.level>0){  
-      message('estimated trend coefficients: beta.hat=',beta.hat,"\n",sep='')
-      message('estimated covariance parameters: theta.hat=',theta.hat,"\n",sep=',')
+    print('estimated trend coefficients:'); print(beta.hat)
+    print('estimated covariance parameters:'); print(theta.hat)
   }
   return(list(z=z,beta.hat=beta.hat,theta.hat=theta.hat,
               trend=trend,locs=locs,covmodel=covmodel))

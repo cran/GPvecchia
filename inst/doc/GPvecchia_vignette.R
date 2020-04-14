@@ -50,7 +50,7 @@ if(spatial.dim==1){  #  1-D case
 n.p=nrow(locs.pred)
 
 ## ----paramm-est, cache=TRUE----------------------------------------------
-vecchia.est=vecchia_estimate(data,locs)
+vecchia.est=vecchia_estimate(data,locs,,output.level=0)
 
 ## ------------------------------------------------------------------------
 preds=vecchia_pred(vecchia.est,locs.pred)
