@@ -45,19 +45,25 @@ arma::uvec clusterEqual(arma::mat locs, int K, int dimStart){
       arma::uvec r2 = regInds( find(regLocs.col(d)<cutoff) );
 
       arma::uvec border = regInds( find(regLocs.col(d)==cutoff) );
-      int lengthDiff = r1.size() - r2.size();
-      if(lengthDiff>0){
-        r2 = join_cols(r2, border.head(lengthDiff));
-      } else {
-        r1 = join_cols(r1, border.head(abs(lengthDiff)));
-      }
+      if( border.size() > 0 ){
+      
+        Rcout << "border size=" << border.size() << endl;
+        arma::uword lengthDiff = abs(int(r1.size() - r2.size()));
+        bool sign = r1.size() > r2.size();
+        if( sign > 0 ){
+          r2 = join_cols(r2, border.head(lengthDiff));
+        } else {
+          r1 = join_cols(r1, border.head(lengthDiff));
+        }
 
-      if(border.size() - abs(lengthDiff)>0){
-        border = border.tail(border.size() - abs(lengthDiff));
-	      int halfLength = border.size()/2;
-	      r1 = join_cols(r1, border.head(halfLength));
-	      r2 = join_cols(r2, border.tail(border.size() - halfLength));
+        if(border.size() - lengthDiff>0){
+          border = border.tail(border.size() - lengthDiff);
+	        int halfLength = border.size()/2;
+	        r1 = join_cols(r1, border.head(halfLength));
+	        r2 = join_cols(r2, border.tail(border.size() - halfLength));
+        }
       }
+      
       (*newRegions)[2*id] = r1;
       (*newRegions)[2*id+1] = r2;
 
@@ -113,7 +119,7 @@ arma::umat getNNmatrix(map<string,arma::uvec> knots, int m) {
   map<unsigned int,arma::uvec> neighbours;
   set<string> roots;
   int minRes = 10;
-  int effM = 0;
+  arma::uword effM = 0;
 
   //find the roots of the tree
   for(auto const &x: knots){
@@ -212,11 +218,11 @@ tuple<map<string, arma::uvec>, int, arma::uvec, arma::uvec > knotTree(arma::mat 
 
     eff_M = max(m, eff_M);
     arma::uvec regInds = region.second;
-    int n = regInds.size();
+    //int n = regInds.size();
     arma::uvec clusters;
 
     if(m<M){
-      int rEff = min(r[m], regInds.size());
+      arma::uword rEff = min(r[m], regInds.size());
       if(eff_r(m)==0){
         eff_r(m) = rEff;
       } else if(eff_r(m)!=rEff) {
@@ -241,7 +247,7 @@ tuple<map<string, arma::uvec>, int, arma::uvec, arma::uvec > knotTree(arma::mat 
 	      }
       }
 
-      for( int childNo=0; childNo<J(m); ++childNo ){
+      for( arma::uword childNo=0; childNo<J(m); ++childNo ){
 	      string childId = id + "_" + to_string(childNo);
 	      arma::uvec childInds = regInds( find(clusters==childNo) );
 	      remaining.push( make_pair( childId, childInds ) );

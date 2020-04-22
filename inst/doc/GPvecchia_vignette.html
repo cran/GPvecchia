@@ -12,7 +12,7 @@
 
 <meta name="author" content="Marcin Jurek, Daniel Zilber, Matthias Katzfuss" />
 
-<meta name="date" content="2020-04-10" />
+<meta name="date" content="2020-04-21" />
 
 <title>GPvecchia tutorial</title>
 
@@ -95,7 +95,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GPvecchia tutorial</h1>
 <h4 class="author">Marcin Jurek, Daniel Zilber, Matthias Katzfuss</h4>
-<h4 class="date">2020-04-10</h4>
+<h4 class="date">2020-04-21</h4>
 
 
 
@@ -264,6 +264,8 @@ MPP =<span class="st"> </span><span class="kw">vecchia_specify</span>(locs, m, <
 MRA_rJM =<span class="st"> </span><span class="kw">vecchia_specify</span>(locs, m, <span class="st">'maxmin'</span>, <span class="dt">conditioning=</span><span class="st">'mra'</span>, <span class="dt">mra.options=</span>mra.options.mra, <span class="dt">verbose=</span><span class="ot">TRUE</span>)
 <span class="co">#&gt; Warning in get.mra.params(n, mra.options, m): M, r set for MRA. If</span>
 <span class="co">#&gt; parameter m was given, it will be overridden</span>
+<span class="co">#&gt; border size=1</span>
+<span class="co">#&gt; border size=1</span>
 <span class="co">#&gt; MRA params: m=22; J=2,2; r=10,5,7; M=2</span></code></pre></div>
 <p>We should note two things to note about this full specifiction of an MRA. First, providing all three <span class="math inline">\(r\)</span>,<span class="math inline">\(J\)</span> and <span class="math inline">\(M\)</span> overrides whatever value of <span class="math inline">\(m\)</span> was provided. Second, in order to be able to place a knot at each point of the grid, the provided parameters might need to be adjusted.</p>
 <p>Finally, we can also use the <code>GPvecchia</code> package to specify a <strong>Nearest Neighbour Gaussian Process (NNGP)</strong> approximation. This can be accomplished as shown below.</p>
