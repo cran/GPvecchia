@@ -16,11 +16,11 @@ vecchia_likelihood=function(z,vecchia.approx,covparms,nuggets,covmodel='matern')
   if(vecchia.approx$cond.yz=='zy')
     warning("cond.yz='zy' will produce a poor likelihood approximation. Use 'SGV' instead.")
 
-  # create the U matrix
-  U.obj=createU(vecchia.approx,covparms,nuggets,covmodel)
-
   # remove NAs in data and U
   removeNAs()
+    
+  # create the U matrix
+  U.obj=createU(vecchia.approx,covparms,nuggets,covmodel)
 
   # compute the loglikelihood
   vecchia_likelihood_U(z,U.obj)
@@ -43,12 +43,20 @@ vecchia_likelihood=function(z,vecchia.approx,covparms,nuggets,covmodel='matern')
 
 
 removeNAs=function(){ # overwrites z and U.obj
-  p = parent.frame()
-  if(any(is.na(p$z))){
-    p$nuggets[is.na(p$z)] = 1e8
-    p$z[is.na(p$z)] = 0
-  }
+    p = parent.frame()
+    if(any(is.na(p$z))){
+
+        if(length(p$nuggets)<length(p$z)) {
+            new.nuggets = rep(0, length(p$z))
+            new.nuggets[!is.na(p$z)] = p$nuggets
+            p$nuggets = new.nuggets
+        }
+        
+        p$nuggets[is.na(p$z)] = stats::var(p$z,na.rm=TRUE)*1e8
+        p$z[is.na(p$z)] = mean(p$z,na.rm=TRUE)
+    }
 }
+
 
 ## evaluate vecchia likelihood based on U
 

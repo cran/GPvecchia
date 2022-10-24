@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/katzfuss-group/GPvecchia.svg?branch=master)](https://travis-ci.org/katzfuss-group/GPvecchia)
-[![CRAN status](https://www.r-pkg.org/badges/version/tidyverse)](https://cran.r-project.org/package=tidyverse)
+[![CRAN status](https://www.r-pkg.org/badges/version/GPvecchia)](https://cran.r-project.org/package=GPvecchia)
+[![CRAN total downloads](https://cranlogs.r-pkg.org/badges/grand-total/GPvecchia)](https://cranlogs.r-pkg.org/badges/grand-total/GPvecchia)
+[![CRAN downloads last month](https://cranlogs.r-pkg.org/badges/last-month/GPvecchia)](https://cranlogs.r-pkg.org/badges/last-month/GPvecchia)
 
 # GPvecchia
 Fast Gaussian-process inference using general Vecchia approximations
@@ -29,11 +31,18 @@ Rcpp::sourceCpp('GPvecchia/src/MaxMin.cpp')
 ```
 --->
  
-This package can be installed directly from Github by running
+This package can be installed directly from CRAN by running
+```{r}
+install.packages("GPvecchia")
+```
+
+OMP library is required for the package to run fast. Mac OS users, where OMP has not been supported for a while could consult [this page](https://stackoverflow.com/questions/43555410/enable-openmp-support-in-clang-in-mac-os-x-sierra-mojave)
+
+Alternatively, the package can be installed using the github source. This can be done either by using `devtools` 
 ```{r}
 devtools::install_github("katzfuss-group/GPvecchia")
 ```
-Alternatively, one can download the repository and then build the package manually:
+or by downloading the repository and then building the package manually:
 ```{bash}
 R CMD build GPvecchia
 R CMD INSTALL GPvecchia_0.1_0.tar.gz

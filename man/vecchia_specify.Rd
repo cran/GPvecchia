@@ -4,9 +4,19 @@
 \alias{vecchia_specify}
 \title{specify a general vecchia approximation}
 \usage{
-vecchia_specify(locs, m = -1, ordering, cond.yz, locs.pred,
-  ordering.pred, pred.cond, conditioning, mra.options = NULL,
-  verbose = FALSE)
+vecchia_specify(
+  locs,
+  m = -1,
+  ordering,
+  cond.yz,
+  locs.pred,
+  ordering.pred,
+  pred.cond,
+  conditioning,
+  mra.options = NULL,
+  ic0 = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{locs}{nxd matrix of observed locs}
@@ -27,6 +37,8 @@ vecchia_specify(locs, m = -1, ordering, cond.yz, locs.pred,
 or 'mra'}
 
 \item{mra.options}{Settings for number of levels and neighbors per level}
+
+\item{ic0}{Specifies if ic0 decomposition should be used as opposed to regular Cholesky}
 
 \item{verbose}{Provide more detail when using MRA calculations.  Default is false.}
 }

@@ -24,7 +24,7 @@ using namespace std;
 // [[Rcpp::export]]
 List U_NZentries (const int Ncores, const arma::uword n, const arma::mat& locs, const arma::umat& revNNarray, const arma::mat& revCondOnLatent, const arma::vec& nuggets, const arma::vec& nuggets_obsord, const std::string covType, const arma::vec covparms){
 
-  if ((covType!="matern")&(covType!="esqe")){
+  if ((covType!="matern") && (covType!="esqe")){
     Rcerr << "Error message: " << covType << " covariance is not implemented"<< endl;
   }
   
@@ -56,9 +56,16 @@ List U_NZentries (const int Ncores, const arma::uword n, const arma::mat& locs, 
     
       arma::vec onevec = zeros(n0);
       onevec[n0-1] = 1;
-      arma::vec M = solve(chol(covmat,"upper"),onevec);
-    
-      Lentries(k,span(0,n0-1)) = M.t();
+
+      try {
+        arma::mat R = chol(covmat, "upper");
+        arma::vec M = solve(R, onevec);
+        Lentries(k,span(0,n0-1)) = M.t();
+      } catch (const runtime_error& error) {
+        Rcerr << "Error message: Cholesky decomposition failed:" << error.what() << endl;
+      }
+      //arma::vec M = solve(chol(covmat,"upper"),onevec);
+      //Lentries(k,span(0,n0-1)) = M.t();
     }
 
   #else
@@ -83,9 +90,17 @@ List U_NZentries (const int Ncores, const arma::uword n, const arma::mat& locs, 
       
       arma::vec onevec = zeros(n0);
       onevec[n0-1] = 1;
-      arma::vec M = solve(chol(covmat,"upper"),onevec);
-      
-      Lentries(k,span(0,n0-1)) = M.t();
+
+
+      try {
+        arma::mat R = chol(covmat, "upper");
+        arma::vec M = solve(R, onevec);
+        Lentries(k,span(0,n0-1)) = M.t();
+      } catch (const runtime_error& error) {
+        Rcerr << "Error message: Cholesky decomposition failed:" << error.what() << endl;
+      }
+      //arma::vec M = solve(chol(covmat,"upper"),onevec);
+      //Lentries(k,span(0,n0-1)) = M.t();
     }
 
   #endif
@@ -130,9 +145,17 @@ List U_NZentries_mat (int Ncores, const arma::uword n, const arma::mat& locs, co
 
       arma::vec onevec = zeros(n0);
       onevec[n0-1] = 1;
-      arma::vec M = solve(chol(covmat,"upper"),onevec);
 
-      Lentries(k,span(0,n0-1)) = M.t();
+
+      try {
+        arma::mat R = chol(covmat, "upper");
+        arma::vec M = solve(R, onevec);
+        Lentries(k,span(0,n0-1)) = M.t();
+      } catch (const runtime_error& error) {
+        Rcerr << "Error message: Cholesky decomposition failed:" << error.what() << endl;
+      }
+      //arma::vec M = solve(chol(covmat,"upper"),onevec);
+      //Lentries(k,span(0,n0-1)) = M.t();
     }
     
   #else
@@ -149,9 +172,16 @@ List U_NZentries_mat (int Ncores, const arma::uword n, const arma::mat& locs, co
       
       arma::vec onevec = zeros(n0);
       onevec[n0-1] = 1;
-      arma::vec M = solve(chol(covmat,"upper"),onevec);
-      
-      Lentries(k,span(0,n0-1)) = M.t();
+
+      try {
+        arma::mat R = chol(covmat, "upper");
+        arma::vec M = solve(R, onevec);
+        Lentries(k,span(0,n0-1)) = M.t();
+      } catch (const runtime_error& error) {
+        Rcerr << "Error message: Cholesky decomposition failed:" << error.what() << endl;
+      }
+      //arma::vec M = solve(chol(covmat,"upper"),onevec);
+      //Lentries(k,span(0,n0-1)) = M.t();
     }
 
   #endif

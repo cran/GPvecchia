@@ -1,4 +1,4 @@
-#' estimate mean and covariance parameters using Vecchia
+#' estimate mean and covariance parameters of a Matern covariance function using Vecchia
 #'
 #' @param data data vector of length n
 #' @param locs n x d matrix of spatial locations
@@ -9,6 +9,8 @@
 #'    see \code{\link{vecchia_likelihood}} for details.
 #' @param theta.ini initial values of covariance parameters. nugget variance must be last.
 #' @param output.level passed on to trace in the \code{stats::optim} function
+#' @param reltol tolerance for the optimization function; by default set to the sqrt of machine
+#'      precision
 #' @param ... additional input parameters for \code{\link{vecchia_specify}}
 #'
 #' @return object containing detrended data z, trend coefficients beta.hat,
@@ -23,68 +25,83 @@
 #' vecchia.est=vecchia_estimate(data,locs,theta.ini=c(covparms,nuggets[1]))
 #' }
 #' @export
-vecchia_estimate=function(data,locs,X,m=20,covmodel='matern',theta.ini,output.level=1,...) {
+vecchia_estimate=function(data,locs,X,m=20,covmodel='matern',theta.ini,output.level=1,
+                          reltol=sqrt(.Machine$double.eps), ...) {
 
-  ## default trend is constant over space (intercept)
-  if(missing(X)){
+    ## default trend is constant over space (intercept)
+    if(missing(X)){
 
-    beta.hat=mean(data)
-    z=data-beta.hat
-    trend='constant'
+        beta.hat=mean(data)
+        z=data-beta.hat
+        trend='constant'
 
-  } else if(is.null(X)){
-  ## if X=NULL, do not estimate any trend
-
-    beta.hat=c()
-    z=data
-    trend='none'
-
-  } else {
-  ## otherwise, estimate and de-trend
-
-    beta.hat=Matrix::solve(crossprod(X),crossprod(X,data))
-    z=data-X%*%beta.hat
-    trend='userspecified'
-
-  }
-
-  ## specify vecchia approximation
-  vecchia.approx=vecchia_specify(locs,m,...)
-
-  ## initial covariance parameter values
-  if(missing(theta.ini)){
-    if(covmodel=='matern'){
-      var.res=stats::var(z)
-      n=length(z)
-      dists.sample=fields::rdist(locs[sample(1:n,min(n,300)),])
-      theta.ini=c(.9*var.res,mean(dists.sample)/4,.8,.1*var.res) # var,range,smooth,nugget
+    } else if(is.null(X)){
+        ## if X=NULL, do not estimate any trend
+        
+        beta.hat=c()
+        z=data
+        trend='none'
+        
     } else {
-      stop("Initial cov. parameter values must be specified if cov.model!='matern'")
+        ## otherwise, estimate and de-trend
+
+        beta.hat=Matrix::solve(crossprod(X),crossprod(X,data))
+        z=data-X%*%beta.hat
+        trend='userspecified'
+
     }
-  }
 
-  ## specify vecchia loglikelihood
-  n.par=length(theta.ini)
+    ## specify vecchia approximation
+    vecchia.approx=vecchia_specify(locs,m,...)
 
-  negloglik.vecchia=function(logparms){
-    if(exp(logparms[3])>10 & covmodel=='matern'){
-      stop("The default optimization routine to find parameters did not converge. Try writing your own optimization.")
+    ## initial covariance parameter values
+
+    if(all(is.character(covmodel)) && covmodel=='matern'){
+        if (missing(theta.ini) || any(is.na(theta.ini))){
+
+            var.res=stats::var(z)
+            n=length(z)
+            dists.sample=fields::rdist(locs[sample(1:n,min(n,300)),])
+            theta.ini=c(.9*var.res,mean(dists.sample)/4,.8,.1*var.res) # var,range,smooth,nugget
+        } 
+   }
+
+    ## specify vecchia loglikelihood
+    n.par=length(theta.ini)
+    
+    negloglik.vecchia=function(lgparms){
+        if(exp(lgparms[3])>10 && all(is.character(covmodel)) && covmodel=='matern'){
+            stop("The default optimization routine to find parameters did not converge. Try writing your own optimization.")
+        }
+        l = -vecchia_likelihood(z,vecchia.approx,exp(lgparms)[-n.par],exp(lgparms)[n.par],covmodel=covmodel)
+        return(l)
     }
-    -vecchia_likelihood(z,vecchia.approx,exp(logparms)[-n.par],exp(logparms)[n.par],covmodel=covmodel)
-  }
+    
 
-  ## find MLE of theta (given beta.hat)
-  opt.result=stats::optim(par=log(theta.ini),fn=negloglik.vecchia,
-                   control=list(trace=output.level,maxit=300)) # trace=1 outputs iteration counts
-  theta.hat=exp(opt.result$par)
+    ## find MLE of theta (given beta.hat)
+    #print(negloglik.vecchia(log(theta.ini)))
+    non1pars = which(theta.ini != 1)
+    parscale = rep(1, length(n.par))
+    parscale[non1pars] = log(theta.ini[non1pars])
 
-  ## return estimated parameters
-  if(output.level>0){  
-    print('estimated trend coefficients:'); print(beta.hat)
-    print('estimated covariance parameters:'); print(theta.hat)
-  }
-  return(list(z=z,beta.hat=beta.hat,theta.hat=theta.hat,
-              trend=trend,locs=locs,covmodel=covmodel))
+    opt.result=stats::optim(par=log(theta.ini),
+                            fn=negloglik.vecchia,
+                            method = "Nelder-Mead",
+                            control=list(
+                                trace=100,maxit=300, parscale=parscale,
+                                reltol=reltol
+                          )) # trace=1 outputs iteration counts
+    
+    theta.hat=exp(opt.result$par)
+    names(theta.hat) = c("variance", "range", "smoothness", "nugget")
+
+    ## return estimated parameters
+    if(output.level>0){  
+        cat('estimated trend coefficients:\n'); print(beta.hat)
+        cat('estimated covariance parameters:\n'); print(theta.hat)
+    }
+    return(list(z=z,beta.hat=beta.hat,theta.hat=theta.hat,
+                trend=trend,locs=locs,covmodel=covmodel))
 
 }
 

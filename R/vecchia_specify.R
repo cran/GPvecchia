@@ -13,6 +13,7 @@
 #' @param conditioning conditioning on 'NN' (nearest neighbor) or 'firstm' (fixed set for low rank)
 #'  or 'mra'
 #' @param mra.options Settings for number of levels and neighbors per level
+#' @param ic0 Specifies if ic0 decomposition should be used as opposed to regular Cholesky
 #' @param verbose Provide more detail when using MRA calculations.  Default is false.
 #'
 #' @return An object that specifies the vecchia approximation for later use in likelihood
@@ -26,7 +27,7 @@
 # only has to be run once before repeated likelihood evals
 
 vecchia_specify=function(locs,m=-1,ordering,cond.yz,locs.pred,ordering.pred,pred.cond,
-                         conditioning, mra.options=NULL, verbose=FALSE) {
+                         conditioning, mra.options=NULL, ic0=FALSE, verbose=FALSE) {
 
   if(!is.matrix(locs)) {
     warning("Locations must be in matrix form")
@@ -231,7 +232,7 @@ vecchia_specify=function(locs,m=-1,ordering,cond.yz,locs.pred,ordering.pred,pred
 
   ### object that specifies the vecchia approximation
   vecchia.approx=list(locsord=locsord,obs=obs,ord=ord,ord.z=ord.z,ord.pred=ordering.pred,
-                      U.prep=U.prep,cond.yz=cond.yz, conditioning=conditioning)
+                      U.prep=U.prep,cond.yz=cond.yz, ic0=ic0, conditioning=conditioning)
   # U.prep has attributes: revNNarray,revCond,n.cores,size,rowpointers,colindices,y.ind)
 
   return(vecchia.approx)

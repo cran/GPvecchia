@@ -1,16 +1,16 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.dim=c(7,5)
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(GPvecchia)
 library(Matrix)
 library(fields)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(1988)
 spatial.dim=2
 n=50
@@ -20,14 +20,14 @@ if(spatial.dim==1){
   locs <- cbind(runif(n),runif(n))
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 beta=2
 sig2=1; range=.1; smooth=1.5
 covparms =c(sig2,range,smooth)
 covfun <- function(locs) sig2*MaternFun(fields::rdist(locs),covparms)
 nuggets=rep(.1,n)
 
-## ----fig4, out.width = '400px'-------------------------------------------
+## ----fig4, out.width = '400px'------------------------------------------------
 Om0 <- covfun(locs)+diag(nuggets)
 z=as.numeric(t(chol(Om0))%*%rnorm(n))
 data=z+beta
@@ -39,7 +39,7 @@ if(spatial.dim==1) {
   fields::quilt.plot(locs,data, nx=n, ny=n)
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 n.p=100
 if(spatial.dim==1){  #  1-D case
   locs.pred=matrix(seq(0,1,length=n.p),ncol=1)
@@ -49,10 +49,13 @@ if(spatial.dim==1){  #  1-D case
 }
 n.p=nrow(locs.pred)
 
-## ------------------------------------------------------------------------
+## ----paramm-est, cache=TRUE---------------------------------------------------
+vecchia.est=vecchia_estimate(data,locs,,output.level=0)
+
+## -----------------------------------------------------------------------------
 preds=vecchia_pred(vecchia.est,locs.pred)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ##  exact prediction
 mu.exact=as.numeric(covfun(rbind(locs,locs.pred))[,1:n]%*%solve(Om0,data-beta))+beta
 cov.exact=covfun(rbind(locs,locs.pred))-
@@ -82,22 +85,22 @@ if(spatial.dim==1) {
   par(defpar)
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 m=20
 vecchia.approx=vecchia_specify(locs,m)
 vecchia_likelihood(z,vecchia.approx,covparms,nuggets)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(mvtnorm)
 dmvnorm(z,mean=rep(0,n),sigma=Om0,log=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 m=30
 vecchia.approx=vecchia_specify(locs,m,locs.pred=locs.pred)
 preds=vecchia_prediction(z,vecchia.approx,covparms,nuggets)
 # returns a list with elements mu.pred,mu.obs,var.pred,var.obs,V.ord
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Sigma=V2covmat(preds)$Sigma.pred
 cov.range=quantile(rbind(Sigma,cov.exact.pred),c(.01,.99))
 defpar = par(mfrow=c(1,2))
@@ -105,37 +108,37 @@ fields::image.plot(cov.exact.pred,zlim=cov.range)
 fields::image.plot(Sigma,zlim=cov.range)
 par(mfrow=c(defpar))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 H=Matrix::sparseMatrix(i=1:(n+n.p),j=1:(n+n.p),x=1)[(n+1):(n+n.p),]
 
 # compute variances of Hy
 lincomb.vars=vecchia_lincomb(H,preds$U.obj,preds$V.ord)
 plot(preds$var.pred,lincomb.vars)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 mean(preds$mu.pred)
 
 # compute entire covariance matrix of Hy (here, 1x1)
 H=Matrix::sparseMatrix(i=rep(1,n.p),j=n+(1:n.p),x=1/n.p)
 lincomb.cov=vecchia_lincomb(H,preds$U.obj,preds$V.ord,cov.mat=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 m=20
 mra.options.fulls=list(M=1)
 blockFS = vecchia_specify(locs, m, 'maxmin', conditioning='mra', mra.options=mra.options.fulls, verbose=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 mra.options.mpproc=list(r=c(m,1))
 MPP = vecchia_specify(locs, m, 'maxmin', conditioning='mra', mra.options=mra.options.mpproc, verbose=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 mra.options.mra = list(r=c(10, 5, 5), M=2, J=2)
 MRA_rJM = vecchia_specify(locs, m, 'maxmin', conditioning='mra', mra.options=mra.options.mra, verbose=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 NNGP = vecchia_specify(locs, m, cond.yz='y')
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 vecchia_likelihood(z,blockFS,covparms,nuggets)
 vecchia_likelihood(z,MPP,covparms,nuggets)
 vecchia_likelihood(z,MRA_rJM,covparms,nuggets)
@@ -143,11 +146,11 @@ vecchia_likelihood(z,NNGP,covparms,nuggets)
 vecchia_likelihood(z, vecchia_specify(locs, m), covparms, nuggets)
 dmvnorm(z,mean=rep(0,n),sigma=Om0,log=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # simulate latent process
 y=as.numeric(t(chol(Om0))%*%rnorm(n))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data.model = "logistic"
 
 # simulate data
@@ -173,7 +176,7 @@ if(spatial.dim==1) {
 par(defpar)
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 m=10
 if(spatial.dim==1){
   vecchia.approx=vecchia_specify(locs,m) #IW ordering
@@ -181,7 +184,7 @@ if(spatial.dim==1){
   vecchia.approx=vecchia_specify(locs,m,cond.yz='zy') #RF ordering
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 posterior = calculate_posterior_VL(z,vecchia.approx,likelihood_model=data.model,
                                    covparms = covparms)
 if (spatial.dim==1){
@@ -201,7 +204,7 @@ if (spatial.dim==1){
 }
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ######  specify prediction locations   #######
 n.p=30^2
 if(spatial.dim==1){  #  1-D case
@@ -238,10 +241,10 @@ if (spatial.dim==1){
   par(defpar)
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 vecchia_laplace_likelihood(z,vecchia.approx,likelihood_model=data.model,covparms = covparms)
 
-## ---- eval = FALSE-------------------------------------------------------
+## ---- eval = FALSE------------------------------------------------------------
 #  # currently set up for covariance estimation
 #  vecchia.approx=vecchia_specify(locs, m=10, cond.yz = "zy") # for posterior
 #  vecchia.approx.IW = vecchia_specify(locs, m=10) # for integrated likelihood

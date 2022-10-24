@@ -60,6 +60,8 @@ vecchia_prediction=function(z,vecchia.approx,covparms,nuggets,var.exact,
 ######  compute V for posterior inference   #######
 
 U2V=function(U.obj){
+### when changing this function make sure it returns a dtCMatrix!
+### Otherwise solve in the parent function will be very slow
   
   U.y=U.obj$U[U.obj$latent,]
 
@@ -71,7 +73,16 @@ U2V=function(U.obj){
 
     W=Matrix::tcrossprod(U.y)
     W.rev=revMat(W)
-    V.ord=Matrix::t(Matrix::chol(W.rev))
+
+    if(U.obj$ic0){
+        V.ord=Matrix::t(ichol(W.rev))
+    } else {
+        V.ord=Matrix::t(Matrix::chol(W.rev))
+    }
+
+    V.ord = methods::as(V.ord, 'dtCMatrix')
+      
+    
   } else {  # for obspred ordering
 
     last.obs=max(which(!U.obj$latent))
@@ -85,8 +96,9 @@ U2V=function(U.obj){
     U.oo=U.y[1:latents.before,1:last.obs]
     A=Matrix::tcrossprod(U.oo)
     A.rev=revMat(A)
-    V.oor=Matrix::t(Matrix::chol(A.rev))
-
+    if(U.obj$ic0){ V.oor=Matrix::t(ichol(A.rev))
+      }     else   V.oor=Matrix::t(Matrix::chol(A.rev))
+    
     # combine the blocks into one matrix
     zeromat.sparse=Matrix::sparseMatrix(c(),c(),dims=c(latents.after,latents.before))
     V.or=rbind(zeromat.sparse,V.oor)
@@ -97,6 +109,8 @@ U2V=function(U.obj){
 
   return(V.ord)
 }
+
+
 
 
 ######  posterior mean (predictions)   #######
@@ -173,7 +187,7 @@ vecchia_lincomb=function(H,U.obj,V.ord,cov.mat=FALSE) {
 #'
 #' @return sparse inverse of A, with same sparsity pattern as L
 #' @examples
-#' A=Matrix::sparseMatrix(1:9,1:9,x=4); L=chol(A)
+#' A=Matrix::sparseMatrix(1:9,1:9,x=4); L=Matrix::chol(A)
 #' SelInv(L)
 #' @export
 SelInv=function(cholmat){
