@@ -244,7 +244,7 @@ if (spatial.dim==1){
 ## -----------------------------------------------------------------------------
 vecchia_laplace_likelihood(z,vecchia.approx,likelihood_model=data.model,covparms = covparms)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # currently set up for covariance estimation
 #  vecchia.approx=vecchia_specify(locs, m=10, cond.yz = "zy") # for posterior
 #  vecchia.approx.IW = vecchia_specify(locs, m=10) # for integrated likelihood
