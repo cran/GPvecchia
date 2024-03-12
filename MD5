@@ -1,8 +1,8 @@
-7457b38bb054e88a0a464fb11a3b2dd5 *DESCRIPTION
+8c23266f8f9b98fe89c8f1353267d7eb *DESCRIPTION
 25a335ee6dba393cef50c49b181b80f0 *NAMESPACE
 ee22156acb1f8a69926407722619cf80 *NEWS.md
 eed86df5a3137dd1dc94a4fbc13f39a6 *R/GPvecchia.R
-814a34492bc2520541272576fe0d4768 *R/MRA_utility-functions.r
+e4f0915d85d2ba11ba2a915ec5ca864d *R/MRA_utility-functions.r
 706d430fa132ca599c02026d26a10b61 *R/NN_kdtree.R
 c598f1842d85e2723e81f138d48dabaf *R/RcppExports.R
 17d3149e53fc5b184dc6f7b7fd318f09 *R/U_sparsity.R
@@ -20,7 +20,7 @@ e61cb09f4fdb4ef6b67a5383fa80365f *R/vecchia_wrappers.R
 e0cc7e0ca05d3dc38773df6041709563 *build/vignette.rds
 6b41802d7f653e024804d211adfd11f3 *inst/doc/GPvecchia_vignette.R
 6769868f5235db7b24037855d3174e8e *inst/doc/GPvecchia_vignette.Rmd
-0ce03fc4a7975e3a8a315c41e3ef99f8 *inst/doc/GPvecchia_vignette.html
+4eb500031a471fbd8218da38317a69ca *inst/doc/GPvecchia_vignette.html
 1b5dfc7fbabab3bfda3e59b97fbef021 *man/GPvecchia.Rd
 c88c22b8f1f084e87da7f1fc3b9eaa54 *man/MaternFun.Rd
 7f9fcf55f529b5e36b354a2bd4f0f1e1 *man/SelInv.Rd
@@ -49,10 +49,10 @@ f10180c3bd6f816d0f0dc10b7fdda0e1 *man/order_middleout.Rd
 5b9a7a3f3e68391dca58cfcb1aebc079 *man/vecchia_specify.Rd
 b5a5b25ff9c8da2db7dd602bdb397af4 *src/Esqe.cpp
 78bca1b1835d04ae3a65049800823b75 *src/Esqe.h
-951d1076a8cf1317df18850bb0927e56 *src/Makevars
-951d1076a8cf1317df18850bb0927e56 *src/Makevars.win
-871522e26395c69584acfdfa8502e8f2 *src/Matern.cpp
-a7b40a7e88ab5f8347e20c8ce15a53a1 *src/Matern.h
+f39601e4717639f465eac52b44c6ab70 *src/Makevars
+f39601e4717639f465eac52b44c6ab70 *src/Makevars.win
+38c33aba8068b52f6c07db01e63e2e38 *src/Matern.cpp
+166e5ac9351af9ceef18cc77bef6dae7 *src/Matern.h
 1755db478f37eed8d10f121783c245cd *src/MaxMin.cpp
 03e95351e93b6e60d6c72fafdad78cac *src/RcppExports.cpp
 766cf57ac46613bd6fe964833c855798 *src/U_NZentries.cpp

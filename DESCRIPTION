@@ -1,8 +1,8 @@
 Package: GPvecchia
 Type: Package
 Title: Scalable Gaussian-Process Approximations
-Version: 0.1.6
-Date: 2024-02-08
+Version: 0.1.7
+Date: 2024-02-29
 Authors@R: c(
 	   person("Matthias", "Katzfuss", role=c("aut"), email="katzfuss@gmail.com"),
 	   person("Marcin", "Jurek", role=c("aut", "cre"), email="marcinjurek1988@gmail.com"),
@@ -24,11 +24,11 @@ Encoding: UTF-8
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.9), methods, stats, sparseinv, fields, Matrix(>=
         1.5.1), parallel, GpGp, FNN
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, BH
 RoxygenNote: 7.2.3
 Suggests: mvtnorm, knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2024-02-08 19:55:54 UTC; jurek
+Packaged: 2024-02-29 20:11:39 UTC; jurek
 Repository: CRAN
-Date/Publication: 2024-02-08 20:30:02 UTC
+Date/Publication: 2024-03-12 11:10:03 UTC

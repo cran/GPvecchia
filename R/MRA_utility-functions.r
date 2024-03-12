@@ -2,7 +2,7 @@
 ## where n is the length of the list and m is the length
 ## of the longest vector. Rows wth shorter vectors are
 ## padded with `padding`.
-list2matrix = function(L, padding=NA){
+list2matrix = function(L, padding=NA) {
   a.width = max(sapply(L, function(x) length(x)))
   a.height = length(L)
   A = matrix(rep(padding, a.width*a.height), ncol=a.width)
@@ -15,7 +15,7 @@ list2matrix = function(L, padding=NA){
 }
 
 
-cluster.equal = function(locs, size, K=NULL, dim.start=2){
+cluster.equal = function(locs, size, K=NULL, dim.start=2) {
 
   n = nrow(locs)
   if(is.null(n)) return(c(1))
